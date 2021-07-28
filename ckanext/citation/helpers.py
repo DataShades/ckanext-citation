@@ -11,7 +11,7 @@ _helpers = {}
 
 
 def helper(fn):
-    _helpers[f"tweaks_{fn.__name__}"] = fn
+    _helpers[f"citation_{fn.__name__}"] = fn
     return fn
 
 
