@@ -7,7 +7,19 @@ CKAN_TO_CSL_FIELDS = {
     'author': 'author'
 }
 
+_helpers = {}
 
+
+def helper(fn):
+    _helpers[f"tweaks_{fn.__name__}"] = fn
+    return fn
+
+
+def get_helpers():
+    return _helpers.copy()
+
+
+@helper
 def map_ckan_to_csl_field():
     mappings = config.get('ckanext.citation.csl_mappings')
     if mappings:

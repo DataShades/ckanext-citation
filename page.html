@@ -1,0 +1,12 @@
+{% ckan_extends %}
+
+
+{% block scripts %}
+    {{ super() }}
+    {% asset "citation/citation-js" %}
+{% endblock %}
+
+{% block styles %}
+    {{ super() }}
+    {% asset "citation/citation-css" %}
+{% endblock %}

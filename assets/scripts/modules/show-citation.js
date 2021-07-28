@@ -1,6 +1,6 @@
 /* Cite a dataset in a specific citation style
 */
-this.ckan.module('show-citation', function (jQuery) {
+ckan.module('show-citation', function (jQuery) {
   return {
     options: {
       url: window.location.href
@@ -81,8 +81,8 @@ this.ckan.module('show-citation', function (jQuery) {
                return e.category === 'major';
              });
              if (majorResults.length > 0) {
-               slicedResults = [{id: 0, text: self._('Major Styles'), children: majorResults, disabled: true}]
-                 .concat(slicedResults);
+                slicedResults = [{id: 0, text: self._('Major Styles'), children: majorResults, disabled: true}]
+                        .concat(slicedResults);
              }
           }
           q.callback({
@@ -93,7 +93,9 @@ this.ckan.module('show-citation', function (jQuery) {
       };
       var select2 = this.el.select2(settings).select2('data', data[0]);
 
-      this.el.on('select2-selecting', function (e) {self.formatStyle(e.object);});
+      this.el.on('select2-selecting', function (e) {
+          self.formatStyle(e.object);
+      });
       this.formatStyle(data[0]);
     },
     formatStyle: function (style) {
@@ -111,6 +113,8 @@ this.ckan.module('show-citation', function (jQuery) {
           };
           var citeproc = new CSL.Engine(citeprocSys, a1[0]);
           citeproc.updateItems([self.options.url]);
+          console.log({citeprocSys});
+          console.log(citeproc.makeBibliography());
           self.record.replaceWith(citeproc.makeBibliography()[1].join('\n'));
           self.clipboard.show();
         }

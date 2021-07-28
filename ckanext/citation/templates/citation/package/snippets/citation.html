@@ -1,27 +1,25 @@
 {% set dataset_citation = {'version': c.pkg_dict['metadata_modified']} %}
 
-{% for k, v in h.map_ckan_to_csl_field().iteritems() %}
-  {% do dataset_citation.update({k: c.pkg_dict.get(v, '')}) %}
+{% for k, v in h.map_ckan_to_csl_field().items() %}
+    {% do dataset_citation.update({k: c.pkg_dict.get(v, '')}) %}
 {% endfor %}
 
 <section class="module module-narrow module-shallow citation">
-  {% block cite_as_title %}
-    <h2 class="module-heading"><i class="fa fa-copy"></i> {{ _('Cite as') }}</h2>
-  {% endblock %}
-  {% block cite_as_content %}
-    <p class="module-content">
-      <input type="hidden" data-module="show-citation" data-citation="{{ h.dump_json(dataset_citation) }}">
-      </input>
-      {% block cite_as_text %}
-        <div>{{ _('Loading...') }}</div>
-      {% endblock %}
-      <div class="btn-group">
-        <span class="btn btn-success" data-clipboard-target=".csl-entry">
-          <i class="fa fa-clipboard"></i> {{ _("Cut to clipboard") }}
-        </span>
-      </div>
-    </p>
-  {% endblock %}
+    {% block cite_as_title %}
+        <h2 class="module-heading"><i class="fa fa-copy"></i> {{ _('Cite as') }}</h2>
+    {% endblock %}
+    {% block cite_as_content %}
+        <p class="module-content">
+            <input type="hidden" data-module="show-citation" data-citation="{{ h.dump_json(dataset_citation) }}">
+            </input>
+            {% block cite_as_text %}
+                <div>{{ _('Loading...') }}</div>
+            {% endblock %}
+            <div class="btn-group">
+                <span class="btn btn-success" data-clipboard-target=".csl-entry">
+                    <i class="fa fa-clipboard"></i> {{ _("Cut to clipboard") }}
+                </span>
+            </div>
+        </p>
+    {% endblock %}
 </section>
-
-{% resource 'citation/citation_snippet' %}
