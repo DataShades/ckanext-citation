@@ -1,4 +1,4 @@
-import click 
+import click
 import os
 import inspect
 import xml.etree.cElementTree as ET
@@ -20,21 +20,20 @@ CSL_P = os.path.join(P, 'styles')
 @citation.command('build_styles')
 def cmd_build_styles():
      major_styles = [
-         'apa',
-     #    'modern-language-association',
-         'chicago-note-bibliography',
-         'chicago-author-date',
-     #    'ieee',
-     #    'council-of-science-editors',
-     #    'american-medical-association',
-     #    'american-chemical-society',
-     #    'american-institute-of-physics',
-     #    'american-society-of-civil-engineers',
+        'apa',
+        'modern-language-association',
+        'chicago-note-bibliography',
+        'chicago-author-date',
+        'ieee',
+        'council-of-science-editors',
+        'american-medical-association',
+        'american-chemical-society',
+        'american-institute-of-physics',
+        'american-society-of-civil-engineers',
      ]
      all_csl = os.listdir(CSL_P)
      major_csl = [s + '.csl' for s in major_styles if s + '.csl' in all_csl]
-     # other_csl = [c for c in all_csl if c not in major_csl]
-     styles = _build_styles(major_csl, 'major')# + _build_styles(other_csl, 'other')
+     styles = _build_styles(major_csl, 'major')
      styles_json = json.dumps(styles, separators=(',', ':'))
      with open (os.path.join(P, 'csl_styles.json'), 'w') as f:
          f.write(styles_json)
