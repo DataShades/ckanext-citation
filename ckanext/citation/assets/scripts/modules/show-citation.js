@@ -1,56 +1,48 @@
-/* Cite a dataset in a specific citation style
-*/
-ckan.module('show-citation', function (jQuery) {
+/*
+ * Cite a dataset in a specific citation style
+ */
+ckan.module('show-citation', function ($) {
     return {
+        cslJson: {},
         options: {
-            url: window.location.href
+            url: window.location.href,
+            citation: ""
         },
         initialize: function () {
-            var self = this;
-
             $.proxyAll(this, /setup/, /_on/);
 
-            this.citation = this.el.data('citation');
-            this.record = this.el.parent().next('div');
-            this.clipboard = this.record.next();
+            this.record = this.el.nextAll('.csl-entry');
+            this.clipboard = this.el.nextAll('.btn-group');
             var clipboardJS = new ClipboardJS(this.clipboard.find('.btn')[0]);
 
             clipboardJS.on('success', function (e) {
                 e.clearSelection();
             });
+            this.clipboard.show();
 
             this.setupCitation();
-
-            jQuery.getJSON('/ckanext/citation/csl/csl_styles.json').done(
-                function (data) {
-                    self.setupSelection(data);
-                })
-                .fail(
-                    function (jqXHR, textStatus, errorThrown) {
-                        this.showError(jqXHR, textStatus, errorThrown);
-                    }
-                );
+            $.getJSON('/ckanext/citation/csl/csl_styles.json')
+                .done(this.setupSelection)
+                .fail(this.showError);
         },
         setupCitation: function () {
             var version = decodeURIComponent(this.options.url.split('%40')[1]);
             if (version != 'undefined') {
-                this.citation.version = version;
+                this.options.citation.version = version;
             }
-            var issued = new Date(this.citation.version);
+            var issued = new Date(this.options.citation.version);
             var item = {
                 'id': this.options.url,
                 'type': 'dataset',
-                'title': this.citation.title,
-                'author': [{'literal': this.citation.author}],
+                'title': this.options.citation.title,
+                'author': [{'literal': this.options.citation.author}],
                 'issued': {
                     'date-parts': [[issued.getFullYear(),
                     issued.getMonth(), issued.getDate()]]
                 },
                 'URL': this.options.url,
-                'version': this.citation.version
+                'version': this.options.citation.version
             };
-
-            this.cslJson = {};
             this.cslJson[this.options.url] = item;
         },
         setupSelection: function (data) {
@@ -60,16 +52,15 @@ ckan.module('show-citation', function (jQuery) {
                 placeholder: 'search',
                 width: '100%',
                 query: function (q) {
-                    var that = this;
                     var pageSize = 20;
                     var results = [];
 
                     if (q.term && q.term !== '') {
-                        results = _.filter(that.data, function (e) {
+                        results = _.filter(this.data, function (e) {
                             return e.text.toUpperCase().indexOf(q.term.toUpperCase()) >= 0;
                         });
                     } else if (q.term === '') {
-                        results = that.data;
+                        results = this.data;
                     }
 
                     var otherResults = _.filter(results, function (e) {
@@ -103,24 +94,20 @@ ckan.module('show-citation', function (jQuery) {
         formatStyle: function (style) {
             var self = this;
 
-            self.clipboard.hide();
-            jQuery.when(
-                jQuery.get(style.href, function () {}, 'text'),
-                jQuery.get('/ckanext/citation/csl/locales/locales-en-US.xml', function () {}, 'text'))
-                .done(
-                    function (a1, a2) {
-                        var citeprocSys = {
-                            retrieveLocale: function (lang) {return a2[0];},
-                            retrieveItem: function (id) {return self.cslJson[id];}
-                        };
-                        var citeproc = new CSL.Engine(citeprocSys, a1[0]);
-                        citeproc.updateItems([self.options.url]);
-                        console.log({citeprocSys});
-                        console.log(citeproc.makeBibliography());
-                        self.record.replaceWith(citeproc.makeBibliography()[1].join('\n'));
-                        self.clipboard.show();
-                    }
-                );
+            $.when(
+                $.get(style.href, function () {}, 'text'),
+                $.get('/ckanext/citation/csl/locales/locales-en-US.xml', function () {}, 'text')
+            ).done(
+                function (a1, a2) {
+                    var citeprocSys = {
+                        retrieveLocale: function (lang) {return a2[0];},
+                        retrieveItem: function (id) {return self.cslJson[id];}
+                    };
+                    var citeproc = new CSL.Engine(citeprocSys, a1[0]);
+                    citeproc.updateItems([self.options.url]);
+                    self.record.replaceWith(citeproc.makeBibliography()[1].join('\n'));
+                }
+            );
         }
     };
 });

@@ -6,20 +6,26 @@
 
 <section class="module module-narrow module-shallow citation">
     {% block cite_as_title %}
-        <h2 class="module-heading"><i class="fa fa-copy"></i> {{ _('Cite as') }}</h2>
+        <h2 class="module-heading">
+            <i class="fa fa-copy"></i>
+            {{ _('Cite as') }}
+        </h2>
     {% endblock %}
     {% block cite_as_content %}
-        <p class="module-content">
-            <input type="hidden" data-module="show-citation" data-citation="{{ h.dump_json(dataset_citation) }}">
-            </input>
+        <div class="module-content">
+            <input
+                type="hidden"
+                data-module="show-citation"
+                data-module-citation="{{ h.dump_json(dataset_citation) }}"
+            >
             {% block cite_as_text %}
-                <div>{{ _('Loading...') }}</div>
+                <div class="csl-entry">{{ _('Loading...') }}</div>
             {% endblock %}
             <div class="btn-group">
                 <span class="btn btn-success" data-clipboard-target=".csl-entry">
                     <i class="fa fa-clipboard"></i> {{ _("Cut to clipboard") }}
                 </span>
             </div>
-        </p>
+        </div>
     {% endblock %}
 </section>
