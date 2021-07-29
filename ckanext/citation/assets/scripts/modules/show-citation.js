@@ -11,8 +11,8 @@ ckan.module('show-citation', function ($) {
         initialize: function () {
             $.proxyAll(this, /setup/, /_on/);
 
-            this.record = this.el.nextAll('.csl-entry');
             this.clipboard = this.el.nextAll('.btn-group');
+            this.cslBibBody = this.el.nextAll('.csl-bib-body');
             var clipboardJS = new ClipboardJS(this.clipboard.find('.btn')[0]);
 
             clipboardJS.on('success', function (e) {
@@ -37,8 +37,9 @@ ckan.module('show-citation', function ($) {
                 'title': this.options.citation.title,
                 'author': [{'literal': this.options.citation.author}],
                 'issued': {
-                    'date-parts': [[issued.getFullYear(),
-                    issued.getMonth(), issued.getDate()]]
+                    'date-parts': [
+                        [issued.getFullYear(), issued.getMonth(), issued.getDate()]
+                    ]
                 },
                 'URL': this.options.url,
                 'version': this.options.citation.version
@@ -105,7 +106,8 @@ ckan.module('show-citation', function ($) {
                     };
                     var citeproc = new CSL.Engine(citeprocSys, a1[0]);
                     citeproc.updateItems([self.options.url]);
-                    self.record.replaceWith(citeproc.makeBibliography()[1].join('\n'));
+                    self.cslBibBody.children('.csl-entry').remove();
+                    self.cslBibBody.prepend(citeproc.makeBibliography()[1].join('\n'));
                 }
             );
         }

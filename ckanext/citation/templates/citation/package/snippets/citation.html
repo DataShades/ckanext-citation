@@ -19,7 +19,9 @@
                 data-module-citation="{{ h.dump_json(dataset_citation) }}"
             >
             {% block cite_as_text %}
-                <div class="csl-entry">{{ _('Loading...') }}</div>
+                <div class="csl-bib-body">
+                    <div class="csl-entry">{{ _('Loading...') }}</div>
+                </div>
             {% endblock %}
             <div class="btn-group">
                 <span class="btn btn-success" data-clipboard-target=".csl-entry">
