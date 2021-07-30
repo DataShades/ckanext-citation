@@ -1,6 +1,4 @@
 from six import string_types
-from ckan.common import config, json
-
 
 
 _helpers = {}
@@ -13,5 +11,3 @@ def helper(fn):
 
 def get_helpers():
     return _helpers.copy()
-
-
