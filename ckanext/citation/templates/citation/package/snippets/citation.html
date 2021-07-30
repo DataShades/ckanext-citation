@@ -1,8 +1,12 @@
-{% set dataset_citation = {'version': c.pkg_dict['metadata_modified']} %}
-
-{% for k, v in h.citation_map_ckan_to_csl_field().items() %}
-    {% do dataset_citation.update({k: c.pkg_dict.get(v, '')}) %}
-{% endfor %}
+{% if not dataset_citation %}
+    {%
+    set dataset_citation = h.dump_json({
+    'version': c.pkg_dict['metadata_modified'],
+    'author': c.pkg_dict['author'],
+    'title': c.pkg_dict['title']
+    })
+    %}
+{% endif %}
 
 <section class="module module-narrow module-shallow citation">
     {% block cite_as_title %}
@@ -16,7 +20,7 @@
             <input
                 type="hidden"
                 data-module="show-citation"
-                data-module-citation="{{ h.dump_json(dataset_citation) }}"
+                data-module-citation="{{ dataset_citation }}"
             >
             {% block cite_as_text %}
                 <div class="csl-bib-body">
