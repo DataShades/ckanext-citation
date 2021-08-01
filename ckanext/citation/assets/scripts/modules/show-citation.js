@@ -3,10 +3,9 @@
  */
 ckan.module('show-citation', function ($) {
     return {
-        cslJson: {},
         options: {
             url: window.location.href,
-            citation: ""
+            citation: {}
         },
         initialize: function () {
             $.proxyAll(this, /setup/, /_on/);
@@ -20,31 +19,24 @@ ckan.module('show-citation', function ($) {
             });
             this.clipboard.show();
 
-            this.setupCitation();
             $.getJSON('/ckanext/citation/csl/csl_styles.json')
                 .done(this.setupSelection)
                 .fail(this.showError);
         },
         setupCitation: function () {
-            var version = decodeURIComponent(this.options.url.split('%40')[1]);
-            if (version != 'undefined') {
-                this.options.citation.version = version;
-            }
-            var issued = new Date(this.options.citation.version);
-            var item = {
+            let defaultCSLJson = {
                 'id': this.options.url,
                 'type': 'dataset',
-                'title': this.options.citation.title,
-                'author': [{'literal': this.options.citation.author}],
-                'issued': {
-                    'date-parts': [
-                        [issued.getFullYear(), issued.getMonth(), issued.getDate()]
-                    ]
-                },
-                'URL': this.options.url,
-                'version': this.options.citation.version
             };
-            this.cslJson[this.options.url] = item;
+            // Comment because not understand the logic behind
+            // let version = decodeURIComponent(this.options.url.split('%40')[1]);
+            // if (version != 'undefined') {
+            //     defaultCSLJson['version'] = version
+            // }
+            return {
+                ...defaultCSLJson,
+                ...this.options.citation
+            }
         },
         setupSelection: function (data) {
             var self = this;
@@ -99,12 +91,12 @@ ckan.module('show-citation', function ($) {
                 $.get(style.href, function () {}, 'text'),
                 $.get('/ckanext/citation/csl/locales/locales-en-US.xml', function () {}, 'text')
             ).done(
-                function (a1, a2) {
+                function (style, locale) {
                     var citeprocSys = {
-                        retrieveLocale: function (lang) {return a2[0];},
-                        retrieveItem: function (id) {return self.cslJson[id];}
+                        retrieveLocale: function (lang) {return locale[0];},
+                        retrieveItem: function (id) {return self.setupCitation();}
                     };
-                    var citeproc = new CSL.Engine(citeprocSys, a1[0]);
+                    var citeproc = new CSL.Engine(citeprocSys, style[0]);
                     citeproc.updateItems([self.options.url]);
                     self.cslBibBody.children('.csl-entry').remove();
                     self.cslBibBody.prepend(citeproc.makeBibliography()[1].join('\n'));
