@@ -19,7 +19,7 @@ dataset_citation: A dictionary represent list of CSL variables and values, see h
     %}
 {% endif %}
 
-<section class="module module-narrow module-shallow citation">
+<section class="{% block cite_section_class %}module module-narrow module-shallow citation{% endblock %}">
     {% block cite_as_title %}
         <h2 class="module-heading">
             <i class="fa fa-copy"></i>
