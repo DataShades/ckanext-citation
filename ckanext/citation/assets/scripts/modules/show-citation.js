@@ -23,9 +23,9 @@ ckan.module('show-citation', function ($) {
                 .done(this.setupSelection)
                 .fail(this.showError);
         },
-        setupCitation: function () {
+        setupCitation: function (id) {
             let defaultCSLJson = {
-                'id': this.options.url,
+                'id': id,
                 'type': 'dataset',
             };
             // Comment because not understand the logic behind
@@ -94,9 +94,10 @@ ckan.module('show-citation', function ($) {
                 function (style, locale) {
                     var citeprocSys = {
                         retrieveLocale: function (lang) {return locale[0];},
-                        retrieveItem: function (id) {return self.setupCitation();}
+                        retrieveItem: function (id) {return self.setupCitation(id);}
                     };
                     var citeproc = new CSL.Engine(citeprocSys, style[0]);
+                    citeproc.opt.development_extensions.wrap_url_and_doi = true;
                     citeproc.updateItems([self.options.url]);
                     self.cslBibBody.children('.csl-entry').remove();
                     self.cslBibBody.prepend(citeproc.makeBibliography()[1].join('\n'));
