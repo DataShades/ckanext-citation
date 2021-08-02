@@ -3,5 +3,5 @@
 }
 
 .citation .btn-group {
-  display: none;
+  display: inline-block;
 }
