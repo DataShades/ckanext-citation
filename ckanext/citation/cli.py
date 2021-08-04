@@ -34,13 +34,20 @@ DEFAULT_CSL_MAJOR_STYLES = [
 
 @citation.command('build_styles')
 def cmd_build_styles():
-    major_styles = _csl_styles()
     all_csl = os.listdir(CSL_P)
-    major_csl = [s + '.csl' for s in major_styles if s + '.csl' in all_csl]
+    major_csl = []
+    for style in _csl_styles():
+        style = style + '.csl'
+        if style not in all_csl:
+            click.secho(f'CSL style {style} not found in {CSL_P}', fg='red')
+            continue
+        major_csl.append(style)
+
     styles = _build_styles(major_csl, 'major')
     styles_json = json.dumps(styles, separators=(',', ':'))
     with open (os.path.join(P, 'csl_styles.json'), 'w') as f:
         f.write(styles_json)
+    click.secho('Build Finished!', fg='yellow', bold=True)
 
 
 def _csl_styles():
