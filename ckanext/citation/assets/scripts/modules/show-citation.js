@@ -19,7 +19,7 @@ ckan.module('show-citation', function ($) {
             });
             this.clipboard.show();
 
-            $.getJSON('/ckanext/citation/csl/csl_styles.json')
+            $.getJSON(this.sandbox.client.url('ckanext/citation/csl/csl_styles.json'))
                 .done(this.setupSelection)
                 .fail(this.showError);
         },
