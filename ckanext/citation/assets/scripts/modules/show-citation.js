@@ -88,8 +88,8 @@ ckan.module('show-citation', function ($) {
             var self = this;
 
             $.when(
-                $.get(style.href, function () {}, 'text'),
-                $.get('/ckanext/citation/csl/locales/locales-en-US.xml', function () {}, 'text')
+                $.get(this.sandbox.client.url(style.href), function () {}, 'text'),
+                $.get(this.sandbox.client.url('ckanext/citation/csl/locales/locales-en-US.xml'), function () {}, 'text')
             ).done(
                 function (style, locale) {
                     var citeprocSys = {
