@@ -9,7 +9,7 @@ to cite a dataset in a specific citation style.
 Requirements
 ------------
 
-This extension is only tested in CKAN 2.7 and later.
+This extension is only tested in CKAN 2.9 and later.
 
 ------------
 Installation
@@ -53,9 +53,9 @@ Commands
 
 ``citation``
 
-1. ``build_styles``: generate a list of citation styles.::
+1. ``build-styles``: generate a list of citation styles.::
 
-    ckan citation build_styles
+    ckan citation build-styles
 
 * By default, the following styles will be shown as major styles:
 
@@ -69,10 +69,5 @@ Commands
     * american-chemical-society
     * american-institute-of-physics
     * american-society-of-civil-engineers
-    
+
 * Or the styles list can be configured via options `ckanext.citation.csl_styles` separating by space, or newline characters. Run the command again when you finish adding styles
-
-* You may need to update the citation styles::
-
-    cd ckanext-citation/ckanext/citation/public/ckanext/citation/csl/styles && git pull
-

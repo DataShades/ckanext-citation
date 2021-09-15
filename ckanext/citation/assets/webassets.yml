@@ -1,13 +1,23 @@
-citation-js:
+citation-vendor:
   filter: rjsmin
-  output: ckanext-citation/%(version)s-citation.js
+  output: ckanext-citation/%(version)s-citation-vendor.js
   contents:
     - scripts/vendor/lodash.js/lodash.js
     - scripts/vendor/citeproc.js/citeproc.js
     - scripts/vendor/clipboard.js/clipboard.js
-    - scripts/modules/show-citation.js
 
-citation-css:
-  output: ckanext-citation/%(version)s-citation.css
+citation-styles:
+  output: ckanext-citation/%(version)s-citation-styles.css
   contents:
     - styles/citation.css
+
+citation:
+  filter: rjsmin
+  output: ckanext-citation/%(version)s-citation.js
+  extra:
+    preload:
+      - base/main
+      - citation/citation-vendor
+      - citation/citation-styles
+  contents:
+    - scripts/modules/show-citation.js

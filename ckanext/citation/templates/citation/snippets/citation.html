@@ -2,22 +2,14 @@
 Show citation section with provided values
 
 dataset_citation: A dictionary represent list of CSL variables and values, see helper.py
-  for more information. If not provided, the default one will be used (see below).
-  List of variables are defined here https://docs.citationstyles.org/en/stable/specification.html#appendix-iv-variables
+for more information.
+List of variables are defined here https://docs.citationstyles.org/en/stable/specification.html#appendix-iv-variables
 
-  e.g.:  {% snippet 'citation/snippets/citation.html', dataset_citation={'title': 'a title', 'author': 'hy', 'DOI': '10.1029/2011JC007049'} %}
+e.g.:  {% snippet 'citation/snippets/citation.html', dataset_citation={'title': 'a title', 'author': 'hy', 'DOI': '10.1029/2011JC007049'} %}
 
 #}
 
-{% if not dataset_citation %}
-    {%
-    set dataset_citation = {
-    'version': c.pkg_dict['metadata_modified'],
-    'author': c.pkg_dict['author'],
-    'title': c.pkg_dict['title']
-    }
-    %}
-{% endif %}
+{% asset "citation/citation" %}
 
 <section class="{% block cite_section_class %}module module-narrow module-shallow citation{% endblock %}">
     {% block cite_as_title %}
@@ -31,7 +23,7 @@ dataset_citation: A dictionary represent list of CSL variables and values, see h
             <input
                 type="hidden"
                 data-module="show-citation"
-                data-module-citation="{{ h.dump_json(dataset_citation) }}"
+                data-module-citation="{{ dataset_citation|tojson|forceescape }}"
             >
             {% block cite_as_text %}
                 <div class="csl-bib-body">
