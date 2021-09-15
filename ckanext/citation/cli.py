@@ -1,9 +1,13 @@
+from __future__ import annotations
+
 import click
 import os
 import inspect
+import requests
 import xml.etree.cElementTree as ET
 from collections import OrderedDict
 from ckan.common import config, json
+import ckan.plugins.toolkit as tk
 
 @click.group()
 def citation():
@@ -17,6 +21,7 @@ P = os.path.join(os.path.dirname(inspect.getfile(m)),
                  'public', 'ckanext', 'citation', 'csl')
 CSL_P = os.path.join(P, 'styles')
 
+REMOTE_URL = "https://raw.githubusercontent.com/citation-style-language/styles/master/"
 
 DEFAULT_CSL_MAJOR_STYLES = [
     'apa',
@@ -32,14 +37,22 @@ DEFAULT_CSL_MAJOR_STYLES = [
 ]
 
 
-@citation.command('build_styles')
-def cmd_build_styles():
-    all_csl = os.listdir(CSL_P)
+@citation.command('build-styles')
+@click.option("-r", "--remote", is_flag=True)
+def cmd_build_styles(remote):
     major_csl = []
     for style in _csl_styles():
         style = style + '.csl'
-        if style not in all_csl:
-            click.secho(f'CSL style {style} not found in {CSL_P}', fg='red')
+        if remote:
+            resp = requests.get(os.path.join(REMOTE_URL, style), timeout=5, stream=True)
+            if not resp.ok:
+                tk.error_shout(f"Cannot get remote style {style}: {resp.reason}")
+                continue
+            with open(os.path.join(CSL_P, style), "wb") as dest:
+                for chunk in resp.iter_content():
+                    dest.write(chunk)
+        if style not in os.listdir(CSL_P):
+            tk.error_shout(f'CSL style {style} not found in {CSL_P}')
             continue
         major_csl.append(style)
 
