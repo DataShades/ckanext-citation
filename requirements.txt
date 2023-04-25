@@ -1,2 +1,2 @@
-ckanext-toolbelt~=0.0.3
-citeproc-py
+ckanext-toolbelt~=0.3.10
+citeproc-py==0.6.0

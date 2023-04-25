@@ -4,9 +4,10 @@ import json
 from typing import Any
 
 import citeproc
-from  dateutil.parser import parse
+from dateutil.parser import parse
 
 import ckan.plugins.toolkit as tk
+
 from ckanext.toolbelt.decorators import Collector
 
 helper, get_helpers = Collector("citation").split()
@@ -27,12 +28,13 @@ def format_csl(**metadata: Any) -> dict[str, Any]:
     ordinary_vars = set(citeproc.VARIABLES)
     ordinary_vars |= {v.replace("_", "-") for v in ordinary_vars}
 
-    citation = { var: metadata[var] for var in ordinary_vars if metadata.get(var) }
+    citation = {var: metadata[var] for var in ordinary_vars if metadata.get(var)}
 
     _format_dates(citation)
     _format_names(citation)
 
     return citation
+
 
 def _map_metadata(metadata: dict[str, Any]):
     mapping = json.loads(tk.config.get(CONFIG_MAPPING, DEFAULT_MAPPING))
@@ -50,7 +52,10 @@ def _format_dates(citation):
         if field not in citation:
             continue
         date = parse(citation[field])
-        citation[field] = citeproc.source.Date(year=date.year, month=date.month, day=date.day)
+        citation[field] = citeproc.source.Date(
+            year=date.year, month=date.month, day=date.day
+        )
+
 
 def _format_names(citation):
     for field in citeproc.NAMES:

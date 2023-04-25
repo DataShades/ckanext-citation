@@ -87,22 +87,14 @@ ckan.module('show-citation', function ($) {
         formatStyle: function (style) {
             var self = this;
 
-            $.when(
-                $.get(this.sandbox.client.url(style.href), function () {}, 'text'),
-                $.get(this.sandbox.client.url('ckanext/citation/csl/locales/locales-en-US.xml'), function () {}, 'text')
-            ).done(
-                function (style, locale) {
-                    var citeprocSys = {
-                        retrieveLocale: function (lang) {return locale[0];},
-                        retrieveItem: function (id) {return self.setupCitation(id);}
-                    };
-                    var citeproc = new CSL.Engine(citeprocSys, style[0]);
-                    citeproc.opt.development_extensions.wrap_url_and_doi = true;
-                    citeproc.updateItems([self.options.url]);
-                    self.cslBibBody.children('.csl-entry').remove();
-                    self.cslBibBody.prepend(citeproc.makeBibliography()[1].join('\n'));
-                }
-            );
+            this.sandbox.client.call('POST', 'citation_format_style', {
+                style_id: style.id,
+                style_dict: self.options.citation,
+                style_formatter: 'html'
+            }, function (data) {
+                self.cslBibBody.children('.csl-entry').remove();
+                self.cslBibBody.prepend('<div class="csl-entry">' + data.result + '</div>');
+            });
         }
     };
 });

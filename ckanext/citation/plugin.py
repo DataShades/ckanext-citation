@@ -1,8 +1,10 @@
 import ckan.plugins as plugins
 import ckan.plugins.toolkit as toolkit
 from ckan.lib.plugins import DefaultTranslation
-from .helpers import get_helpers
-from .cli import get_commands
+
+from ckanext.citation.cli import get_commands
+from ckanext.citation.helpers import get_helpers
+from ckanext.citation.logic.action import get_actions
 
 
 class CitationPlugin(plugins.SingletonPlugin, DefaultTranslation):
@@ -10,13 +12,14 @@ class CitationPlugin(plugins.SingletonPlugin, DefaultTranslation):
     plugins.implements(plugins.IConfigurer)
     plugins.implements(plugins.ITemplateHelpers)
     plugins.implements(plugins.IClick)
+    plugins.implements(plugins.IActions)
 
     # IConfigurer
 
     def update_config(self, config_):
-        toolkit.add_template_directory(config_, 'templates')
-        toolkit.add_public_directory(config_, 'public')
-        toolkit.add_resource('assets', 'citation')
+        toolkit.add_template_directory(config_, "templates")
+        toolkit.add_public_directory(config_, "public")
+        toolkit.add_resource("assets", "citation")
 
     # ITemplateHelpers
 
@@ -25,3 +28,6 @@ class CitationPlugin(plugins.SingletonPlugin, DefaultTranslation):
 
     def get_commands(self):
         return get_commands()
+
+    def get_actions(self):
+        return get_actions()

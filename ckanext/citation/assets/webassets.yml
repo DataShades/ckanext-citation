@@ -3,7 +3,6 @@ citation-vendor:
   output: ckanext-citation/%(version)s-citation-vendor.js
   contents:
     - scripts/vendor/lodash.js/lodash.js
-    - scripts/vendor/citeproc.js/citeproc.js
     - scripts/vendor/clipboard.js/clipboard.js
 
 citation-styles:
